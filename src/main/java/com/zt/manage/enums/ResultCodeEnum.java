@@ -23,6 +23,14 @@ public enum ResultCodeEnum {
      * 用户权限不足
      */
     USER_AUTH_ERROR(20004, "用户权限不足！"),
+    /**
+     * token过期
+     */
+    USER_TOKEN_ERROR(20005, "token过期！"),
+    /**
+     * 密码修改
+     */
+    USER_PASSWORD_ERROR(20006, "密码被修改，请重新登录！"),
     ;
 
     public int code;

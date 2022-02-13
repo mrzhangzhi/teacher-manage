@@ -20,4 +20,8 @@ public class UserService {
     public User login(LoginReq req) {
         return userMapper.selectByPhoneNoAndPassword(req.getUsername(), req.getPassword());
     }
+
+    public User selectByUserId(String userId) {
+        return userMapper.selectByUserId(userId);
+    }
 }

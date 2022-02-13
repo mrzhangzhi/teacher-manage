@@ -1,5 +1,6 @@
 package com.zt.manage.controller;
 
+import com.zt.manage.annotations.PassToken;
 import com.zt.manage.constants.CommonConstant;
 import com.zt.manage.constants.RespMsgConstant;
 import com.zt.manage.domain.pojo.user.User;
@@ -7,6 +8,7 @@ import com.zt.manage.domain.req.user.LoginReq;
 import com.zt.manage.domain.resp.ResultResp;
 import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.UserService;
+import com.zt.manage.utils.JWTUtil;
 import com.zt.manage.utils.ResultUtil;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    @PassToken
     @PostMapping("/login")
     public ResultResp<String> login(@RequestBody LoginReq req) {
         User user = userService.login(req);
@@ -33,6 +36,12 @@ public class UserController {
         if (CommonConstant.ONE == user.getLockStatus()) {
             return ResultUtil.error(ResultCodeEnum.USER_IS_LOCK);
         }
-        return ResultUtil.build(ResultCodeEnum.OK.code, RespMsgConstant.LOGIN_OK, "1111");
+        return ResultUtil.build(ResultCodeEnum.OK.code, RespMsgConstant.LOGIN_OK, JWTUtil.createToken(user));
     }
+
+    @GetMapping("/getMessage")
+    public String getMessage() {
+        return "你已通过验证";
+    }
+
 }
