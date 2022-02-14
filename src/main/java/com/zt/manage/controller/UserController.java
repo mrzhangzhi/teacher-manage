@@ -28,7 +28,7 @@ public class UserController {
 
     @PassToken
     @PostMapping("/login")
-    public ResultResp<String> login(@RequestBody LoginReq req) {
+    public ResultResp login(@RequestBody LoginReq req) {
         User user = userService.login(req);
         if (user == null) {
             return ResultUtil.error(ResultCodeEnum.USER_LOGIN_ERROR);

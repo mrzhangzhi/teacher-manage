@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.zt.manage.domain.pojo.user.User;
-import org.springframework.util.DigestUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -14,11 +13,17 @@ import java.util.Date;
  */
 public class JWTUtil {
 
-    //加密secret
+    /**
+     * 加密secret
+     */
     private static final String SECRET = "ASD@Dik921c8qwinw19";
-    //过期时间
+    /**
+     * 过期时间
+     */
     private static final Integer TIME_OUT_DAY = 30;
-    //需要重新生成的天数 如果token的时间超过这个 则重新生成token
+    /**
+     * 需要重新生成的天数 如果token的时间超过这个 则重新生成token
+     */
     private static final Integer NEED_CREATE_DAY = 7;
 
     /**
@@ -30,12 +35,11 @@ public class JWTUtil {
     public static String createToken(User user) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, TIME_OUT_DAY);
-        String token = JWT.create()
+        return JWT.create()
                 .withClaim("userId", user.getUserId())
-                .withClaim("key", DigestUtils.md5DigestAsHex(user.getPassword().getBytes()))
+                .withClaim("password", user.getPassword())
                 .withExpiresAt(calendar.getTime())
                 .sign(Algorithm.HMAC256(SECRET));
-        return token;
     }
 
 
@@ -72,9 +76,8 @@ public class JWTUtil {
      * @return
      */
     public static boolean isUpdatedPassword(DecodedJWT decodedJWT, User user) {
-        String oldPwd = decodedJWT.getClaim("key").asString();
-        String newPwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
-        return oldPwd.equals(newPwd) ? false : true;
+        String oldPwd = decodedJWT.getClaim("password").asString();
+        return !oldPwd.equals(user.getPassword());
     }
 
 

@@ -1,8 +1,8 @@
 package com.zt.manage.interceptors;
 
-import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.zt.manage.annotations.PassToken;
+import com.zt.manage.constants.CommonConstant;
 import com.zt.manage.domain.pojo.user.User;
 import com.zt.manage.domain.resp.ResultResp;
 import com.zt.manage.enums.ResultCodeEnum;
@@ -10,6 +10,7 @@ import com.zt.manage.service.UserService;
 import com.zt.manage.utils.JWTUtil;
 import com.zt.manage.utils.JsonUtils;
 import com.zt.manage.utils.ResultUtil;
+import com.zt.manage.utils.UserInfoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -28,7 +29,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
         // 从 http 请求头中取出 token
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(CommonConstant.AUTH_TOKEN);
         // 如果不是映射到方法直接通过
         if (!(object instanceof HandlerMethod)) {
             return true;
@@ -42,10 +43,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
-        //检查有没有需要用户权限的注解
-//        if (method.isAnnotationPresent(UserLoginToken.class)) {
-//            UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
-//            if (userLoginToken.required()) {
         // 执行认证
         if (token == null) {
             result(response, ResultUtil.error(ResultCodeEnum.USER_TOKEN_ERROR));
@@ -56,14 +53,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             String userId = JWTUtil.getUserId(tokenInfo);
             User user = userService.selectByUserId(userId);
             //验证是否修改过密码
-            if (!JWTUtil.isUpdatedPassword(tokenInfo, user)) {
+            if (user != null && !JWTUtil.isUpdatedPassword(tokenInfo, user)) {
                 //如果需要重新创建一个token 则通知客户端保存新的token 并且将新的token返回
                 if (JWTUtil.needCreate(tokenInfo)) {
-                    JSONObject tokenJson = new JSONObject();
-                    tokenJson.put("token", JWTUtil.createToken(user));
-                    result(response, ResultUtil.build(ResultCodeEnum.OK,tokenJson));
+                    result(response, ResultUtil.error(ResultCodeEnum.USER_TOKEN_ERROR));
                     return false;
                 } else {
+                    UserInfoUtil.setUserId(userId);
                     return true;
                 }
             }

@@ -10,7 +10,7 @@ public class CommonConstant {
     /**
      * token header名称
      */
-    public static final String AUTH_TOKEN = "AUTH_TOKEN";
+    public static final String AUTH_TOKEN = "Authorization";
 
     /**
      * 用户id
@@ -31,4 +31,9 @@ public class CommonConstant {
      * 账号锁定
      */
     public final static int ONE = 1;
+
+    /**
+     * 管理员权限id
+     */
+    public final static int ADMIN_ROLE_ID = 1;
 }

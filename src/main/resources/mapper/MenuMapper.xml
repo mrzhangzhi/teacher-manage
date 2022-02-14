@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zt.manage.mapper.MenuMapper">
+
+    <resultMap id="UserMenuMap" type="com.zt.manage.domain.dto.menu.UserMenuDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="menu_path" property="menuPath" jdbcType="VARCHAR"/>
+        <result column="menu_sort" property="menuSort" jdbcType="INTEGER"/>
+        <collection property="childMenuList" resultMap="ChildMenuMap"/>
+    </resultMap>
+
+    <resultMap id="ChildMenuMap" type="com.zt.manage.domain.dto.menu.ChildMenuDTO">
+        <id column="child_id" property="id" jdbcType="INTEGER"/>
+        <result column="child_menu_name" property="menuName" jdbcType="VARCHAR"/>
+        <result column="child_menu_path" property="menuPath" jdbcType="VARCHAR"/>
+        <result column="child_menu_sort" property="menuSort" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="selectMenuByRoleIds" resultMap="UserMenuMap">
+        SELECT a.id, a.menu_name, a.menu_path, a.menu_sort,
+        c.id child_id, c.menu_name child_menu_name, c.menu_path child_menu_path, c.menu_sort child_menu_sort
+        FROM menu a
+        <if test="roleIds != null and roleIds.size() > 0">
+            INNER JOIN role_menu_mapper_list b ON a.id = b.menu_id
+        </if>
+        LEFT JOIN menu c ON c.parent_id = a.id
+        WHERE a.parent_id = 0 and a.menu_type = 0 and c.menu_type = 0
+        <if test="roleIds != null and roleIds.size() > 0">
+            and b.role_id in
+            <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+                #{roleId}
+            </foreach>
+        </if>
+    </select>
+</mapper>
