@@ -2,6 +2,8 @@ package com.zt.manage.mapper;
 
 
 import com.zt.manage.domain.pojo.user.User;
+import com.zt.manage.domain.req.user.UserListQueryReq;
+import com.zt.manage.domain.resp.user.UserListResp;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -35,4 +37,20 @@ public interface UserMapper {
      * @return
      */
     List<Integer> selectRoleByUserId(@Param("userId") String userId);
+
+    /**
+     * 根据条件查询用户总数
+     *
+     * @param req
+     * @return
+     */
+    int selectCountByQuery(UserListQueryReq req);
+
+    /**
+     * 根据条件查询用户列表
+     *
+     * @param req
+     * @return
+     */
+    List<UserListResp> selectListByQuery(UserListQueryReq req);
 }

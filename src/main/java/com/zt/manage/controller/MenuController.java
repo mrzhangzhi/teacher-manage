@@ -5,6 +5,7 @@ import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.MenuService;
 import com.zt.manage.utils.ResultUtil;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class MenuController {
     @Resource
     private MenuService menuService;
 
-    @PostMapping("/menuList")
+    @GetMapping("/menuList")
     public ResultResp menuList() {
         return ResultUtil.build(ResultCodeEnum.OK, menuService.selectMenuList());
     }

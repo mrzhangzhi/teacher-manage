@@ -20,11 +20,11 @@
     <select id="selectMenuByRoleIds" resultMap="UserMenuMap">
         SELECT a.id, a.menu_name, a.menu_path, a.menu_sort,
         c.id child_id, c.menu_name child_menu_name, c.menu_path child_menu_path, c.menu_sort child_menu_sort
-        FROM menu a
+        FROM sys_menu a
         <if test="roleIds != null and roleIds.size() > 0">
-            INNER JOIN role_menu_mapper_list b ON a.id = b.menu_id
+            INNER JOIN sys_role_menu_mapper_list b ON a.id = b.menu_id
         </if>
-        LEFT JOIN menu c ON c.parent_id = a.id
+        LEFT JOIN sys_menu c ON c.parent_id = a.id
         WHERE a.parent_id = 0 and a.menu_type = 0 and c.menu_type = 0
         <if test="roleIds != null and roleIds.size() > 0">
             and b.role_id in

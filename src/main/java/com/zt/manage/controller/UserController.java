@@ -5,6 +5,7 @@ import com.zt.manage.constants.CommonConstant;
 import com.zt.manage.constants.RespMsgConstant;
 import com.zt.manage.domain.pojo.user.User;
 import com.zt.manage.domain.req.user.LoginReq;
+import com.zt.manage.domain.req.user.UserListQueryReq;
 import com.zt.manage.domain.resp.ResultResp;
 import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.UserService;
@@ -39,9 +40,9 @@ public class UserController {
         return ResultUtil.build(ResultCodeEnum.OK.code, RespMsgConstant.LOGIN_OK, JWTUtil.createToken(user));
     }
 
-    @GetMapping("/getMessage")
-    public String getMessage() {
-        return "你已通过验证";
+    @PostMapping("/userList")
+    public ResultResp userService(@RequestBody UserListQueryReq req) {
+        return ResultUtil.build(ResultCodeEnum.OK.code, RespMsgConstant.LOGIN_OK, userService.selectListByQuery(req));
     }
 
 }
