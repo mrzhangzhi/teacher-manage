@@ -1,9 +1,12 @@
 package com.zt.manage.mapper;
 
 
+import com.zt.manage.domain.dto.user.UserListDTO;
+import com.zt.manage.domain.dto.user.UserUpdateDTO;
 import com.zt.manage.domain.pojo.user.User;
+import com.zt.manage.domain.req.user.UserInsertReq;
 import com.zt.manage.domain.req.user.UserListQueryReq;
-import com.zt.manage.domain.resp.user.UserListResp;
+import com.zt.manage.domain.req.user.UserUpdateReq;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -52,5 +55,21 @@ public interface UserMapper {
      * @param req
      * @return
      */
-    List<UserListResp> selectListByQuery(UserListQueryReq req);
+    List<UserListDTO> selectListByQuery(UserListQueryReq req);
+
+    /**
+     * 新增用户
+     *
+     * @param req
+     * @return
+     */
+    Integer insert(UserInsertReq req);
+
+    /**
+     * 修改用户信息
+     *
+     * @param req
+     * @return
+     */
+    Integer update(UserUpdateDTO req);
 }

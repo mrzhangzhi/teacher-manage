@@ -30,7 +30,11 @@ public enum ResultCodeEnum {
     /**
      * 密码修改
      */
-    USER_PASSWORD_ERROR(20006, "密码被修改，请重新登录！"),
+    USER_PASSWORD_UPDATE(20006, "密码被修改，请重新登录！"),
+    /**
+     * 密码错误
+     */
+    USER_PASSWORD_ERROR(20007, "密码错误！"),
     ;
 
     public int code;

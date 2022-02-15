@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
+/**
+ * 登陆拦截器
+ */
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private UserService userService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) {
         // 从 http 请求头中取出 token
         String token = request.getHeader(CommonConstant.AUTH_TOKEN);
         // 如果不是映射到方法直接通过
@@ -52,18 +55,29 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (tokenInfo != null) {
             String userId = JWTUtil.getUserId(tokenInfo);
             User user = userService.selectByUserId(userId);
+
             //验证是否修改过密码
-            if (user != null && !JWTUtil.isUpdatedPassword(tokenInfo, user)) {
+            if (user != null) {
+                //账号是否被锁定
+                if (user.getLockStatus() == CommonConstant.ONE) {
+                    result(response, ResultUtil.error(ResultCodeEnum.USER_IS_LOCK));
+                    return false;
+                }
+                //密码被修改
+                if (JWTUtil.isUpdatedPassword(tokenInfo, user)) {
+                    result(response, ResultUtil.error(ResultCodeEnum.USER_PASSWORD_UPDATE));
+                    return false;
+                }
                 //如果需要重新创建一个token 则通知客户端保存新的token 并且将新的token返回
                 if (JWTUtil.needCreate(tokenInfo)) {
                     result(response, ResultUtil.error(ResultCodeEnum.USER_TOKEN_ERROR));
                     return false;
-                } else {
-                    UserInfoUtil.setUserId(userId);
-                    return true;
                 }
+                UserInfoUtil.setUserId(userId);
+                return true;
             }
         }
+
         //验证未通过
         result(response, ResultUtil.error(ResultCodeEnum.USER_TOKEN_ERROR));
         return false;
@@ -97,5 +111,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest httpServletRequest,
                                 HttpServletResponse httpServletResponse,
                                 Object o, Exception e) throws Exception {
+        UserInfoUtil.deleteUserInfo();
     }
 }

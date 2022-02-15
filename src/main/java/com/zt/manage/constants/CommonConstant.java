@@ -36,4 +36,14 @@ public class CommonConstant {
      * 管理员权限id
      */
     public final static int ADMIN_ROLE_ID = 1;
+
+    /**
+     * 管理员权限id
+     */
+    public final static String ADMIN_USER_ID = "admin";
+
+    /**
+     * 默认密码
+     */
+    public final static String DEFAULT_PASSWORD = "49ba59abbe56e057";
 }

@@ -1,4 +1,4 @@
-package com.zt.manage.domain.resp.user;
+package com.zt.manage.domain.dto.user;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.util.Date;
  * @author mrzhang
  */
 @Data
-public class UserListResp {
+public class UserListDTO {
 
     private String userId;
 

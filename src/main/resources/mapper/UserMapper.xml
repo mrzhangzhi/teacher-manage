@@ -17,8 +17,9 @@
     <sql id="ListQuerySql">
         from sys_user
         <where>
+            user_id != "admin"
             <if test="query != null and query != ''">
-                phone_no like concat(#{query} ,'%')
+                and phone_no like concat(#{query} ,'%')
             </if>
         </where>
     </sql>
@@ -30,10 +31,32 @@
     </select>
 
     <select id="selectListByQuery" parameterType="com.zt.manage.domain.req.user.UserListQueryReq"
-            resultType="com.zt.manage.domain.resp.user.UserListResp">
+            resultType="com.zt.manage.domain.dto.user.UserListDTO">
         select user_id, user_name, phone_no, lock_status, create_time
         <include refid="ListQuerySql"/>
         order by create_time desc
         limit #{pageIndex}, #{pageSize}
     </select>
+
+    <insert id="insert" parameterType="com.zt.manage.domain.req.user.UserInsertReq">
+        insert ignore into sys_user(`user_id`, `user_name`, `phone_no`, `password`)
+        values (#{userId}, #{userName}, #{phoneNo}, #{password} )
+    </insert>
+
+    <update id="update" parameterType="com.zt.manage.domain.dto.user.UserUpdateDTO">
+        update sys_user
+        <set>
+            <if test="userName != null and userName != ''">
+                `user_name` = #{userName},
+            </if>
+            <if test="password != null and password != ''">
+                `password` = #{password},
+            </if>
+            <if test="lockStatus != null">
+                `lock_status` = #{lockStatus},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
 </mapper>

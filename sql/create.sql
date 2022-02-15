@@ -9,7 +9,8 @@ CREATE TABLE `sys_user` (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unix_userId` (`user_id`) USING BTREE,
-  UNIQUE KEY `unix_phoneNo` (`phone_no`) USING BTREE
+  UNIQUE KEY `unix_phoneNo` (`phone_no`) USING BTREE,
+  KEY `idx_createTime` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
 
 INSERT INTO `sys_user` (`id`, `user_id`, `user_name`, `phone_no`, `password`, `lock_status`, `create_time`, `update_time`) VALUES ('1', 'admin', '管理员', 'admin', '49ba59abbe56e057', '0', '2021-11-19 15:11:17', '2022-02-14 10:56:31');
@@ -24,7 +25,8 @@ CREATE TABLE `sys_menu` (
   `menu_sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_createTime` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单信息表';
 
 INSERT INTO `manage`.`sys_menu` (`id`, `parent_id`, `menu_name`, `menu_path`, `menu_type`, `menu_sort`, `create_time`, `update_time`) VALUES ('1', '0', '系统管理', '', '0', '1', '2022-02-14 11:11:34', '2022-02-14 11:15:10');
@@ -40,7 +42,8 @@ CREATE TABLE `sys_role` (
   `role_desc` varchar(50) NOT NULL DEFAULT '' COMMENT '权限描述',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_createTime` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限信息表';
 
 INSERT INTO `sys_role` (`id`, `role_name`, `role_desc`, `create_time`, `update_time`) VALUES ('1', '系统管理员', '最大权限', '2022-02-14 11:19:35', '2022-02-14 11:19:35');
