@@ -10,6 +10,8 @@ import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.UserService;
 import com.zt.manage.utils.JWTUtil;
 import com.zt.manage.utils.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,12 +26,15 @@ import javax.annotation.Resource;
 @RestController
 public class LoginController {
 
+    private final static Logger log = LoggerFactory.getLogger(LoginController.class);
+
     @Resource
     private UserService userService;
 
     @PassToken
     @PostMapping("/login")
     public ResultResp login(@RequestBody LoginReq req) {
+        log.info("登陆");
         User user = userService.selectByLoginInfo(req);
         if (user == null) {
             return ResultUtil.error(ResultCodeEnum.USER_LOGIN_ERROR);
