@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ChildMenuDTO {
+public class ButtonMenuDTO {
 
     private Integer id;
 
@@ -16,6 +16,4 @@ public class ChildMenuDTO {
     private Integer menuSort;
 
     private boolean selectFlag;
-
-    private List<ButtonMenuDTO> childMenuList;
 }

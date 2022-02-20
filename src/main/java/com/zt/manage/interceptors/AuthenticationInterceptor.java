@@ -3,7 +3,7 @@ package com.zt.manage.interceptors;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.zt.manage.annotations.PassToken;
 import com.zt.manage.constants.CommonConstant;
-import com.zt.manage.domain.pojo.user.User;
+import com.zt.manage.domain.pojo.user.SysUser;
 import com.zt.manage.domain.resp.ResultResp;
 import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.UserService;
@@ -54,17 +54,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         DecodedJWT tokenInfo = JWTUtil.getTokenInfo(token);
         if (tokenInfo != null) {
             String userId = JWTUtil.getUserId(tokenInfo);
-            User user = userService.selectByUserId(userId);
+            SysUser sysUser = userService.selectByUserId(userId);
 
             //验证是否修改过密码
-            if (user != null) {
+            if (sysUser != null) {
                 //账号是否被锁定
-                if (user.getLockStatus() == CommonConstant.ONE) {
+                if (sysUser.getLockStatus() == CommonConstant.ONE) {
                     result(response, ResultUtil.error(ResultCodeEnum.USER_IS_LOCK));
                     return false;
                 }
                 //密码被修改
-                if (JWTUtil.isUpdatedPassword(tokenInfo, user)) {
+                if (JWTUtil.isUpdatedPassword(tokenInfo, sysUser)) {
                     result(response, ResultUtil.error(ResultCodeEnum.USER_PASSWORD_UPDATE));
                     return false;
                 }

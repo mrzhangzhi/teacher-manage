@@ -1,5 +1,7 @@
 package com.zt.manage.controller;
 
+import com.zt.manage.domain.req.menu.MenuListQueryReq;
+import com.zt.manage.domain.req.role.RoleListQueryReq;
 import com.zt.manage.domain.resp.ResultResp;
 import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.MenuService;
@@ -22,8 +24,8 @@ public class MenuController {
     private MenuService menuService;
 
     @PostMapping("/list")
-    public ResultResp menuList() {
-        return ResultUtil.build(ResultCodeEnum.OK, menuService.selectMenuList());
+    public ResultResp menuList(@RequestBody MenuListQueryReq req) {
+        return ResultUtil.build(ResultCodeEnum.OK, menuService.selectMenuList(req));
     }
 
     @PostMapping("/userMenuList")

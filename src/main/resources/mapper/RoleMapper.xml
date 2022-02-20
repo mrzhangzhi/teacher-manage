@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zt.manage.mapper.RoleMapper">
+    <insert id="insert" parameterType="role">
+        insert ignore into sys_role (role_name, role_desc)
+        values (#{roleName}, #{roleDesc})
+    </insert>
+    <insert id="insertRoleMenu">
+        insert into sys_role_menu_mapper_list (role_id, menu_id)
+        values
+        <foreach collection="menuList" item="menuId" separator=",">
+            (#{roleId}, #{menuId})
+        </foreach>
+    </insert>
+    <update id="update" parameterType="role">
+        update sys_role set role_name=#{roleName}
+        <if test="roleDesc != null and roleDesc != ''">
+            ,role_desc = #{roleDesc}
+        </if>
+        where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from sys_role where id = #{roleId};
+        delete from sys_role_menu_mapper_list where role_id = #{roleId};
+    </delete>
+    <delete id="deleteRoleMenu">
+        delete from sys_role_menu_mapper_list where role_id = #{roleId};
+    </delete>
 
     <select id="selectRoleList" resultType="com.zt.manage.domain.dto.role.UserRoleDTO">
         select a.id roleId, a.role_name, a.role_desc, if(b.id is null, 0 ,1 ) selectFlag
         from sys_role a
-        LEFT JOIN sys_user_role_mapper_list b ON a.id = b.id
+        LEFT JOIN sys_user_role_mapper_list b ON a.id = b.role_id
         <if test="userId != null and userId != ''">
             AND b.user_id = #{userId}
         </if>
+        where a.id != 1
     </select>
 
     <sql id="ListQuerySql">
@@ -28,11 +54,17 @@
     </select>
 
     <select id="selectListByQuery" parameterType="com.zt.manage.domain.req.role.RoleListQueryReq"
-            resultType="com.zt.manage.domain.dto.role.RoleDTO">
-        select id roleId, role_name, role_desc, create_time
+            resultType="role">
+        select id, role_name, role_desc, create_time
         <include refid="ListQuerySql"/>
-        order by create_time
+        order by id desc
         limit #{pageIndex}, #{pageSize}
+    </select>
+
+    <select id="selectUserCountByRoleId" resultType="java.lang.Integer">
+        select count(id)
+        from sys_user_role_mapper_list
+        where role_id = #{roleId}
     </select>
 
 </mapper>

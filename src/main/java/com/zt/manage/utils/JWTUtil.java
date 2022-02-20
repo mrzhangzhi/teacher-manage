@@ -3,7 +3,7 @@ package com.zt.manage.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.zt.manage.domain.pojo.user.User;
+import com.zt.manage.domain.pojo.user.SysUser;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,15 +29,15 @@ public class JWTUtil {
     /**
      * 生成token
      *
-     * @param user
+     * @param sysUser
      * @return
      */
-    public static String createToken(User user) {
+    public static String createToken(SysUser sysUser) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, TIME_OUT_DAY);
         return JWT.create()
-                .withClaim("userId", user.getUserId())
-                .withClaim("password", user.getPassword())
+                .withClaim("userId", sysUser.getUserId())
+                .withClaim("password", sysUser.getPassword())
                 .withExpiresAt(calendar.getTime())
                 .sign(Algorithm.HMAC256(SECRET));
     }
@@ -72,12 +72,12 @@ public class JWTUtil {
      * 验证是否修改过密码
      *
      * @param decodedJWT
-     * @param user
+     * @param sysUser
      * @return
      */
-    public static boolean isUpdatedPassword(DecodedJWT decodedJWT, User user) {
+    public static boolean isUpdatedPassword(DecodedJWT decodedJWT, SysUser sysUser) {
         String oldPwd = decodedJWT.getClaim("password").asString();
-        return !oldPwd.equals(user.getPassword());
+        return !oldPwd.equals(sysUser.getPassword());
     }
 
 

@@ -10,7 +10,7 @@ import java.util.Date;
  */
 @Alias("user")
 @Data
-public class User {
+public class SysUser {
 
     private Integer id;
 
@@ -27,4 +27,13 @@ public class User {
     private Date createTime;
 
     private Date updateTime;
+
+    public SysUser(){}
+
+    public SysUser(String userId, String userName, String phoneNo, String password) {
+        this.userId = userId;
+        this.userName = userName;
+        this.phoneNo = phoneNo;
+        this.password = password;
+    }
 }

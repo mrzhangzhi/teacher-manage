@@ -2,11 +2,8 @@ package com.zt.manage.mapper;
 
 
 import com.zt.manage.domain.dto.user.UserListDTO;
-import com.zt.manage.domain.dto.user.UserUpdateDTO;
-import com.zt.manage.domain.pojo.user.User;
-import com.zt.manage.domain.req.user.UserInsertReq;
+import com.zt.manage.domain.pojo.user.SysUser;
 import com.zt.manage.domain.req.user.UserListQueryReq;
-import com.zt.manage.domain.req.user.UserUpdateReq;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,7 +20,7 @@ public interface UserMapper {
      * @param password
      * @return
      */
-    User selectByPhoneNoAndPassword(@Param("phoneNo") String phoneNo, @Param("password") String password);
+    SysUser selectByPhoneNoAndPassword(@Param("phoneNo") String phoneNo, @Param("password") String password);
 
     /**
      * 根据用户id查询用户信息
@@ -31,7 +28,7 @@ public interface UserMapper {
      * @param userId
      * @return
      */
-    User selectByUserId(@Param("userId") String userId);
+    SysUser selectByUserId(@Param("userId") String userId);
 
     /**
      * 根据用户id查询权限id列表
@@ -63,7 +60,7 @@ public interface UserMapper {
      * @param req
      * @return
      */
-    Integer insert(UserInsertReq req);
+    Integer insert(SysUser req);
 
     /**
      * 修改用户信息
@@ -71,5 +68,28 @@ public interface UserMapper {
      * @param req
      * @return
      */
-    Integer update(UserUpdateDTO req);
+    Integer update(SysUser req);
+
+    /**
+     * 根据用户id删除用户
+     *
+     * @param userId
+     * @return
+     */
+    int deleteUser(@Param("userId") String userId);
+
+    /**
+     * 删除用户所有权限
+     *
+     * @param userId
+     */
+    void deleteUserRole(@Param("userId") String userId);
+
+    /**
+     * 批量新增用户权限
+     *
+     * @param userId
+     * @param roleList
+     */
+    void insertUserRole(@Param("userId") String userId, @Param("roleList") List<Integer> roleList);
 }

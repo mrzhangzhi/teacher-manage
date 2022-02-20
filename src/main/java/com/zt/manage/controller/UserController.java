@@ -6,6 +6,7 @@ import com.zt.manage.enums.ResultCodeEnum;
 import com.zt.manage.service.RoleService;
 import com.zt.manage.service.UserService;
 import com.zt.manage.utils.ResultUtil;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,32 +32,45 @@ public class UserController {
     }
 
     @PostMapping("/updateLockStatus")
-    public ResultResp updateLockStatus(@RequestBody UserStatusUpdateReq req) {
+    public ResultResp updateLockStatus(@Validated @RequestBody UserStatusUpdateReq req) {
         return ResultUtil.build(ResultCodeEnum.OK, userService.updateLockStatus(req));
     }
 
     @PostMapping("/roleList")
-    public ResultResp userRoleList() {
-        return ResultUtil.build(ResultCodeEnum.OK, roleService.selectUserRoleList());
+    public ResultResp userRoleList(@Validated @RequestBody UserRoleListReq req) {
+        return ResultUtil.build(ResultCodeEnum.OK, roleService.selectUserRoleList(req));
     }
 
     @PostMapping("/insertInfo")
     public ResultResp updateInfo(@RequestBody UserInsertReq req) {
-        return ResultUtil.build(ResultCodeEnum.OK, userService.insert(req));
+        if (userService.insert(req) == 0) {
+            return ResultUtil.error(ResultCodeEnum.USER_IS_EXIST);
+        }
+        return ResultUtil.build(ResultCodeEnum.OK, true);
     }
 
     @PostMapping("/updateInfo")
-    public ResultResp updateInfo(@RequestBody UserUpdateReq req) {
+    public ResultResp updateInfo(@Validated @RequestBody UserUpdateReq req) {
         return ResultUtil.build(ResultCodeEnum.OK, userService.update(req));
     }
 
     @PostMapping("/updatePassword")
-    public ResultResp updateInfo(@RequestBody UserPasswordUpdateReq req) {
+    public ResultResp updateInfo(@Validated @RequestBody UserPasswordUpdateReq req) {
         Integer count = userService.updatePassword(req);
         if (count == null) {
             return ResultUtil.error(ResultCodeEnum.USER_PASSWORD_ERROR);
         } else {
             return ResultUtil.build(ResultCodeEnum.OK, count);
         }
+    }
+
+    @PostMapping("/deleteUser")
+    public ResultResp deleteUser(@RequestBody UserDeleteReq req) {
+        return ResultUtil.build(ResultCodeEnum.OK, userService.deleteUser(req.getUserId()));
+    }
+
+    @PostMapping("/updateRole")
+    public ResultResp updateRole(@Validated @RequestBody UserRoleUpdateReq req) {
+        return ResultUtil.build(ResultCodeEnum.OK, userService.updateRole(req));
     }
 }

@@ -2,35 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zt.manage.mapper.MenuMapper">
 
-    <resultMap id="UserMenuMap" type="com.zt.manage.domain.dto.menu.UserMenuDTO">
-        <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="menu_name" property="menuName" jdbcType="VARCHAR"/>
-        <result column="menu_path" property="menuPath" jdbcType="VARCHAR"/>
-        <result column="menu_sort" property="menuSort" jdbcType="INTEGER"/>
-        <collection property="childMenuList" resultMap="ChildMenuMap"/>
-    </resultMap>
-
-    <resultMap id="ChildMenuMap" type="com.zt.manage.domain.dto.menu.ChildMenuDTO">
-        <id column="child_id" property="id" jdbcType="INTEGER"/>
-        <result column="child_menu_name" property="menuName" jdbcType="VARCHAR"/>
-        <result column="child_menu_path" property="menuPath" jdbcType="VARCHAR"/>
-        <result column="child_menu_sort" property="menuSort" jdbcType="INTEGER"/>
-    </resultMap>
-
-    <select id="selectMenuByRoleIds" resultMap="UserMenuMap">
-        SELECT a.id, a.menu_name, a.menu_path, a.menu_sort,
-        c.id child_id, c.menu_name child_menu_name, c.menu_path child_menu_path, c.menu_sort child_menu_sort
+    <select id="selectMenuByRoleIds" resultType="com.zt.manage.domain.dto.menu.MenuDTO">
+        SELECT a.id, a.parent_id, a.menu_name, a.menu_path, a.menu_sort
         FROM sys_menu a
         <if test="roleIds != null and roleIds.size() > 0">
-            INNER JOIN sys_role_menu_mapper_list b ON a.id = b.menu_id
+            inner JOIN sys_role_menu_mapper_list b ON a.id = b.menu_id
         </if>
-        LEFT JOIN sys_menu c ON c.parent_id = a.id
-        WHERE a.parent_id = 0 and a.menu_type = 0 and c.menu_type = 0
+        <where>
+            <if test="roleIds != null and roleIds.size() > 0">
+                and b.role_id in
+                <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+                    #{roleId}
+                </foreach>
+            </if>
+        </where>
         <if test="roleIds != null and roleIds.size() > 0">
-            and b.role_id in
-            <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
-                #{roleId}
-            </foreach>
+            group by a.id
         </if>
+    </select>
+
+    <select id="selectMenuByRoleId" resultType="com.zt.manage.domain.dto.menu.MenuDTO">
+        SELECT a.id, a.parent_id, a.menu_name, a.menu_path, a.menu_sort, b.id roleMenuId
+        FROM sys_menu a
+        left JOIN sys_role_menu_mapper_list b ON a.id = b.menu_id and b.role_id = #{roleId}
+    </select>
+
+    <select id="selectCountByQuery" resultType="java.lang.Integer">
+        select count(id) from sys_menu where parent_id = 0
+    </select>
+    <select id="selectListByQuery" parameterType="com.zt.manage.domain.req.menu.MenuListQueryReq"
+            resultType="com.zt.manage.domain.dto.menu.MenuDTO">
+        select id, parent_id, menu_name, menu_path, menu_type, menu_sort
+        from sys_menu
+        where parent_id = 0
+        limit #{pageIndex}, #{pageSize}
+    </select>
+
+    <select id="selectListByParentIdList" resultType="com.zt.manage.domain.dto.menu.MenuDTO">
+        select id, parent_id, menu_name, menu_path, menu_type, menu_sort
+        from sys_menu
+        where parent_id in
+        <foreach collection="parentIdList" item="parentId" open="(" close=")" separator=",">
+            #{parentId}
+        </foreach>
     </select>
 </mapper>

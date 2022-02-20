@@ -35,6 +35,14 @@ public enum ResultCodeEnum {
      * 密码错误
      */
     USER_PASSWORD_ERROR(20007, "密码错误！"),
+    /**
+     * 账号已存在
+     */
+    USER_IS_EXIST(20008, "账号已存在！"),
+    /**
+     * 权限存在绑定用户
+     */
+    ROLE_HAVE_USER(20008, "请先解绑所有用户！"),
     ;
 
     public int code;

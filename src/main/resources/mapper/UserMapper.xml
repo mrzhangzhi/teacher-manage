@@ -6,7 +6,7 @@
         select * from sys_user where phone_no=#{phoneNo} and password=#{password}
     </select>
 
-    <select id="selectByUserId" resultType="com.zt.manage.domain.pojo.user.User">
+    <select id="selectByUserId" resultType="user">
         select * from sys_user where user_id=#{userId}
     </select>
 
@@ -38,12 +38,19 @@
         limit #{pageIndex}, #{pageSize}
     </select>
 
-    <insert id="insert" parameterType="com.zt.manage.domain.req.user.UserInsertReq">
+    <insert id="insert" parameterType="user">
         insert ignore into sys_user(`user_id`, `user_name`, `phone_no`, `password`)
         values (#{userId}, #{userName}, #{phoneNo}, #{password} )
     </insert>
+    <insert id="insertUserRole">
+        insert into sys_user_role_mapper_list (`user_id`, `role_id`)
+        values
+        <foreach collection="roleList" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
 
-    <update id="update" parameterType="com.zt.manage.domain.dto.user.UserUpdateDTO">
+    <update id="update" parameterType="user">
         update sys_user
         <set>
             <if test="userName != null and userName != ''">
@@ -58,5 +65,13 @@
         </set>
         where user_id = #{userId}
     </update>
+
+    <delete id="deleteUser">
+        delete from sys_user where user_id = #{userId};
+        delete from sys_user_role_mapper_list where user_id = #{userId}
+    </delete>
+    <delete id="deleteUserRole">
+        delete from sys_user_role_mapper_list where user_id = #{userId}
+    </delete>
 
 </mapper>
